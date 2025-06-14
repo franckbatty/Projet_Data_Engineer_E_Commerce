@@ -1,3 +1,3 @@
-![WhatsApp Image 2025-05-10 at 06 25 27](https://github.com/user-attachments/assets/3c32e03b-3c57-479a-84f6-029c1ba8ad61)
+![Architecture Haut niveau Data Werehouse](https://github.com/user-attachments/assets/454374c3-214c-4b85-b713-c72a9f3b53dc)
 
 # Projet_Data_Engineer_E_Commerce
