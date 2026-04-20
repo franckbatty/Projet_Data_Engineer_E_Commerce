@@ -1,0 +1,71 @@
+version: "3.9" # Version de Docker Compose utilisée
+
+services:
+  # =========================
+  # SERVICE POSTGRESQL UNIQUE
+  # =========================
+  airflow_db:
+    image: postgres:15 # Image officielle PostgreSQL
+    container_name: airflow_db # Nom du conteneur
+
+    environment:
+      POSTGRES_USER: postgres # utilisateur attendu par ton ETL
+      POSTGRES_PASSWORD: frenecker # mot de passe identique à ton ETL
+      POSTGRES_DB: postgres # base identique à ton ETL (dbname=postgres)
+
+    ports:
+      - "5433:5432" # port local 5433 → conteneur 5432 (évite conflit avec PostgreSQL local)
+
+    volumes:
+      - airflow_data:/var/lib/postgresql/data # persistance des données de la base postgres
+
+  # =========================
+  # SERVICE AIRFLOW (WEB + SCHEDULER)
+  # =========================
+  airflow:
+    image: apache/airflow:2.9.2 # Image officielle Airflow
+    container_name: airflow
+
+    depends_on:
+      - airflow_db # Airflow dépend de la base PostgreSQL
+
+    restart: always # redémarrage automatique si crash
+
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor # exécution locale (pas de Celery)
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false" # désactive les DAGs exemples
+
+      # Connexion à la base postgres avec l’utilisateur/mot de passe attendus par ton ETL
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:frenecker@airflow_db:5432/postgres
+
+      # Permet à Python de trouver tes scripts ETL et DAGs
+      PYTHONPATH: /opt/airflow:/opt/airflow/ETL
+
+    volumes:
+      - ./DAG:/opt/airflow/dags # DAGs
+      - ./ETL:/opt/airflow/ETL # code ETL (Bronze/Silver/Gold)
+      - ./data:/opt/airflow/data # fichiers CSV ou datasets
+
+    ports:
+      - "8080:8080" # interface web Airflow accessible sur localhost:8080
+
+    command: >
+      bash -c "
+      airflow db migrate &&             # initialise/migre la base postgres
+
+      airflow users create              # crée un utilisateur admin pour l'UI
+        --username admin
+        --password admin
+        --firstname Franck
+        --lastname Batty
+        --role Admin
+        --email admin@example.com || true &&
+
+      airflow scheduler & airflow webserver  # lance scheduler + UI
+      "
+
+# =========================
+# VOLUMES PERSISTANTS
+# =========================
+volumes:
+  airflow_data: # sauvegarde des données PostgreSQL
