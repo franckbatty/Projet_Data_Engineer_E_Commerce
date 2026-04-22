@@ -8,10 +8,9 @@ services:
     image: postgres:15 # Image officielle PostgreSQL
     container_name: airflow_db # Nom du conteneur
 
-    environment:
-      POSTGRES_USER: postgres # utilisateur attendu par ton ETL
-      POSTGRES_PASSWORD: frenecker # mot de passe identique à ton ETL
-      POSTGRES_DB: postgres # base identique à ton ETL (dbname=postgres)
+    # ✅ Chargement des variables depuis .env
+    env_file:
+      - .env
 
     ports:
       - "5433:5432" # port local 5433 → conteneur 5432 (évite conflit avec PostgreSQL local)
@@ -31,12 +30,16 @@ services:
 
     restart: always # redémarrage automatique si crash
 
+    # ✅ Chargement des variables depuis .env
+    env_file:
+      - .env
+
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor # exécution locale (pas de Celery)
       AIRFLOW__CORE__LOAD_EXAMPLES: "false" # désactive les DAGs exemples
 
-      # Connexion à la base postgres avec l’utilisateur/mot de passe attendus par ton ETL
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:frenecker@airflow_db:5432/postgres
+      # Connexion à la base postgres avec les variables .env
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
 
       # Permet à Python de trouver tes scripts ETL et DAGs
       PYTHONPATH: /opt/airflow:/opt/airflow/ETL

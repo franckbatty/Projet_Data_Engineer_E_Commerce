@@ -9,6 +9,11 @@
 import psycopg2  
 import pandas as pd
 from datetime import datetime
+import os  # Gestion des chemins et fichiers
+from dotenv import load_dotenv # Chargement des variables d'environnement depuis le fichier .env
+
+# Charger les variables depuis le fichier .env
+load_dotenv()
 
 # === Fonction pour afficher un message de début ===
 def start_message(): 
@@ -202,12 +207,12 @@ def loading_data(ti):
 
     # Connexion à PostgreSQL
     connection_params = {
-    "dbname": "postgres",       # même base que Bronze
-    "user": "postgres",         # défini dans docker-compose.yml
-    "password": "frenecker",    # ton mot de passe
-    "host": "airflow_db",       # nom du service Docker
-    "port": 5432                # port interne du conteneur
-    }
+    "dbname": os.getenv("POSTGRES_DB"),        # Base définie dans .env
+    "user": os.getenv("POSTGRES_USER"),        # Utilisateur défini dans .env
+    "password": os.getenv("POSTGRES_PASSWORD"),# Mot de passe défini dans .env
+    "host": os.getenv("POSTGRES_HOST"),        # Host défini dans .env (service Docker)
+    "port": os.getenv("POSTGRES_PORT")         # Port défini dans .env
+}
  
     conn = psycopg2.connect(**connection_params)
     cursor = conn.cursor()

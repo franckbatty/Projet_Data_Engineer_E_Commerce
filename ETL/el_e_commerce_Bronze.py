@@ -10,6 +10,9 @@ import os                    # Gestion des chemins et fichiers
 import pandas as pd          # Manipulation des données tabulaires
 import sys                   # Gestion du PYTHONPATH
 from datetime import datetime # Gestion des dates
+from dotenv import load_dotenv
+# Charger les variables depuis le fichier .env
+load_dotenv()
 
 # ✅ Ajout du chemin du package ETL
 sys.path.append("/opt/airflow/ETL")
@@ -23,11 +26,11 @@ produits_file = "/opt/airflow/data/produits.csv"
 
 # ✅ Paramètres de connexion centralisés
 DB_PARAMS = {
-    "dbname": "postgres",       # défini dans docker-compose.yml
-    "user": "postgres",         # défini dans docker-compose.yml
-    "password": "frenecker",     # Mot de passe PostgreSQL
-    "host": "airflow_db",      # Base de données dans PostgreSQL
-    "port": 5432               # port interne du conteneur
+    "dbname": os.getenv("POSTGRES_DB"),       # Base définie dans .env
+    "user": os.getenv("POSTGRES_USER"),       # Utilisateur défini dans .env
+    "password": os.getenv("POSTGRES_PASSWORD"), # Mot de passe défini dans .env
+    "host": os.getenv("POSTGRES_HOST"),       # Host défini dans .env (service Docker)
+    "port": os.getenv("POSTGRES_PORT")        # Port défini dans .env
 }
 
 # === Fonctions utilitaires ===

@@ -1,4 +1,9 @@
 import psycopg2
+from dotenv import load_dotenv   # ✅ Import pour charger les variables du fichier .env
+import os                       # ✅ Import pour accéder aux variables d'environnement
+
+# Charger les variables définies dans le fichier .env
+load_dotenv()  # ✅ Cette ligne lit ton fichier .env et rend les variables accessibles via os.getenv()
 
 # === Fonction pour afficher un message de début ===
 def start_message(): 
@@ -13,11 +18,11 @@ def get_db_connection():
     try:
         print("Tentative de connexion à la base de données PostgreSQL...")
         conn = psycopg2.connect(
-            host="airflow_db",       # nom du service Docker défini dans docker-compose.yml
-            database="postgres",     # nom de la base
-            user="postgres",         # utilisateur
-            password="frenecker",    # ton mot de passe
-            port=5432                # port interne du conteneur
+            host=os.getenv("POSTGRES_HOST"),       # Host défini dans .env (ex: airflow_db)
+            database=os.getenv("POSTGRES_DB"),     # Base définie dans .env (ex: postgres)
+            user=os.getenv("POSTGRES_USER"),       # Utilisateur défini dans .env (ex: postgres)
+            password=os.getenv("POSTGRES_PASSWORD"), # Mot de passe défini dans .env (ex: frenecker)
+            port=os.getenv("POSTGRES_PORT")        # Port défini dans .env (ex: 5432)
         )
 
         print("Connexion à la base de données établie avec succès")
@@ -31,7 +36,7 @@ def get_db_connection():
         """)
         vues = cur.fetchall() # Récupération des vues dans le schéma Gold.
         # La methode fetchall() retourne une liste contenant toutes les lignes du résultat de la requête.
-        #  Chaque ligne est généralement représentée sous forme de tuple.
+        # Chaque ligne est généralement représentée sous forme de tuple.
         print(f"Connexion établie avec {len(vues)} vues dans le schéma Gold")
         for schema, vue in vues:
             print(f"Vue accessible : {schema}.{vue}")
@@ -95,4 +100,4 @@ def verify_gold_views():
         
     except Exception as e:
         print(f"Erreur lors de la vérification des vues Gold : {e}")
-        raise 
+        raise
