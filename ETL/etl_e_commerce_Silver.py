@@ -29,10 +29,10 @@ def extract_data_postgresql(ti):
 
         # Paramètres de connexion
         connection_params = {
-            "dbname": "******",
+            "dbname": "postgres",
             "user": "postgres",
-            "password": "******",
-            "host": "******",
+            "password": "frenecker",
+            "host": "airflow_db",
             "port": 5432,
         }
         conn = psycopg2.connect(**connection_params)
@@ -202,12 +202,13 @@ def loading_data(ti):
 
     # Connexion à PostgreSQL
     connection_params = {
-        "dbname": "airflow_db",  
-        "user": "postgres",        
-        "password": "frenecker",  
-        "host": "172.28.16.1",        
-        "port": 5432               
-    } 
+    "dbname": "postgres",       # même base que Bronze
+    "user": "postgres",         # défini dans docker-compose.yml
+    "password": "frenecker",    # ton mot de passe
+    "host": "airflow_db",       # nom du service Docker
+    "port": 5432                # port interne du conteneur
+    }
+ 
     conn = psycopg2.connect(**connection_params)
     cursor = conn.cursor()
     print("Connexion à PostgreSQL réussie.")

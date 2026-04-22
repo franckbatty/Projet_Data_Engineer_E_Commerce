@@ -13,12 +13,13 @@ def get_db_connection():
     try:
         print("Tentative de connexion à la base de données PostgreSQL...")
         conn = psycopg2.connect(
-            host="*******",
-            database="*******",
-            user="postgres",
-            password="*******",
-            port=5432
+            host="airflow_db",       # nom du service Docker défini dans docker-compose.yml
+            database="postgres",     # nom de la base
+            user="postgres",         # utilisateur
+            password="frenecker",    # ton mot de passe
+            port=5432                # port interne du conteneur
         )
+
         print("Connexion à la base de données établie avec succès")
         
         # Vérification de la connexion avec les tables de vues
