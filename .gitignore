@@ -6,6 +6,8 @@ __pycache__/
 # Ignorer le fichier .env (variables sensibles)
 .env
 
+# Ingorer le dossier data (données brutes, montées via volumes)
+data/
 
 # C extensions
 *.so
