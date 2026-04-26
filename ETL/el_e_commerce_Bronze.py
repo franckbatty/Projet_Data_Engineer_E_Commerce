@@ -158,7 +158,7 @@ def loading_data(ti):
         print("✅ Chargement terminé avec succès.")
     except Exception as e:
         print(f"❌ Erreur lors du chargement : {str(e)}")
-        conn.rollback()
+        conn.rollback() 
         raise e
     finally:
         cursor.close()

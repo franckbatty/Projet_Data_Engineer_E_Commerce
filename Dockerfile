@@ -1,3 +1,5 @@
+# pas besoin que ton Dockerfile lance main.py, car ton service Airflow utilise déjà l’image officielle
+# apache/airflow:2.9.2 et c’est ce conteneur Airflow qui exécute scheduler + webserver + DAGs.
 # Image de base Python légère (slim = plus petit, plus rapide)
 FROM python:3.10-slim
 

@@ -1,9 +1,13 @@
-version: "3.9" # Version de Docker Compose utilisée
+#version: "3.9" # Version de Docker Compose utilisée
+# Pas besoin de spécifier la version, Docker Compose utilise la dernière par défaut
 
 services:
   # =========================
   # SERVICE POSTGRESQL UNIQUE
   # =========================
+
+  # Un service est un service est simplement un composant de ton application qui tourne dans un conteneur.
+
   airflow_db:
     image: postgres:15 # Image officielle PostgreSQL
     container_name: airflow_db # Nom du conteneur
@@ -14,7 +18,7 @@ services:
 
     ports:
       - "5433:5432" # port local 5433 → conteneur 5432 (évite conflit avec PostgreSQL local)
-      # le port qui va permettre de se connecter Power BI ou à PostgreSQL localement est 5433, mais à l'intérieur du conteneur, Airflow se connectera à 5432
+      # le port qui va permettre de se à connecter Power BI ou à PostgreSQL localement est 5433, mais à l'intérieur du conteneur, Airflow se connectera à 5432
 
     volumes:
       - airflow_data:/var/lib/postgresql/data # persistance des données de la base postgres
